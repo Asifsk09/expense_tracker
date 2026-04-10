@@ -52,6 +52,7 @@ cd expense_tracker
 flutter pub get
 flutter run
 ```
+---
 
 ## 🔥 Highlights
 
