@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// ✅ Import screens (we will create these next)
-import 'screens/dashboard_screen.dart';
-import 'screens/manage_screen.dart';
-import 'screens/transaction_screen.dart';
-
+// ✅ Import screens
+import 'Screens/dashboard_screen.dart';
+import 'Screens/transaction_screen.dart';
+import 'Screens/manage_screen.dart';
+import 'Screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,16 +20,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Expense Tracker',
+      title: 'Asyntra',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MainScreen(),
+
+      // ✅ AUTH CHECK
+      home: FirebaseAuth.instance.currentUser == null
+          ? const LoginScreen()
+          : const MainScreen(),
     );
   }
 }
 
-// ✅ Navigation Controller
+// ✅ MAIN APP WITH BOTTOM NAVIGATION
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -40,11 +45,11 @@ class _MainScreenState extends State<MainScreen> {
 
   int selectedIndex = 0;
 
-  // ✅ Screens list
+  // ✅ Screens list (unchanged)
   final List<Widget> screens = [
     const DashboardScreen(),
-    const ManageScreen(),
-    const TransactionScreen(),
+    const ManageScreen(),      // moved Manage to second (as you said earlier)
+    const TransactionScreen(), // Transactions last
   ];
 
   @override

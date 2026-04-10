@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ManageScreen extends StatefulWidget {
   const ManageScreen({super.key});
@@ -11,52 +12,101 @@ class ManageScreen extends StatefulWidget {
 class _ManageScreenState extends State<ManageScreen> {
 
   final TextEditingController incomeController = TextEditingController();
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController amountController = TextEditingController();
+  final TextEditingController expenseTitleController = TextEditingController();
+  final TextEditingController expenseAmountController = TextEditingController();
 
-  final List<String> categories = ["Food", "Travel", "Shopping", "Bills", "Other"];
-  String selectedCategory = "Food";
+  String selectedIncomeCategory = "Salary";
+  String selectedExpenseCategory = "Food";
 
-  // ✅ SAVE INCOME
-  void _saveIncome() async {
-    double value = double.tryParse(incomeController.text) ?? 0;
-    if (value <= 0) return;
+  DateTime selectedDate = DateTime.now();
+
+  String get uid => FirebaseAuth.instance.currentUser!.uid;
+
+  final List<String> incomeCategories = [
+    "Salary",
+    "Bonus",
+    "Freelance",
+    "Other"
+  ];
+
+  final List<String> expenseCategories = [
+    "Food",
+    "Travel",
+    "Shopping",
+    "Bills",
+    "Other"
+  ];
+
+  // 📅 PICK DATE
+  Future<void> pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+
+    if (!mounted) return;
+
+    if (picked != null) {
+      setState(() => selectedDate = picked);
+    }
+  }
+
+  // ✅ ADD INCOME
+  Future<void> addIncome() async {
+
+    double amount = double.tryParse(incomeController.text) ?? 0;
+    if (amount <= 0) return;
 
     await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
         .collection('income')
-        .doc('monthly')
-        .set({'amount': value});
+        .add({
+      "amount": amount,
+      "category": selectedIncomeCategory,
+      "date": Timestamp.fromDate(selectedDate),
+    });
 
     incomeController.clear();
 
-    // ✅ SNACKBAR
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Income saved ✔")),
+      const SnackBar(content: Text("Income added ✔")),
     );
   }
 
-  // ✅ ADD EXPENSE WITH MONTH
-  void _addExpense() async {
-    String title = titleController.text;
-    double amount = double.tryParse(amountController.text) ?? 0;
+  // ✅ ADD EXPENSE
+  Future<void> addExpense() async {
 
-    if (title.isEmpty || amount <= 0) return;
+    double amount = double.tryParse(expenseAmountController.text) ?? 0;
+    String title = expenseTitleController.text.trim();
 
-    String currentMonth =
-        "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}";
+    if (amount <= 0 || title.isEmpty) return;
 
-    await FirebaseFirestore.instance.collection('expense').add({
-      'title': title,
-      'amount': amount,
-      'category': selectedCategory,
-      'month': currentMonth,
-      'timestamp': DateTime.now(),
+    String monthKey =
+        "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}";
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('expense')
+        .add({
+      "title": title,
+      "amount": amount,
+      "category": selectedExpenseCategory,
+      "date": Timestamp.fromDate(selectedDate),
+      "timestamp": Timestamp.fromDate(selectedDate),
+      "month": monthKey,
     });
 
-    titleController.clear();
-    amountController.clear();
+    expenseTitleController.clear();
+    expenseAmountController.clear();
 
-    // ✅ SNACKBAR
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Expense added ✔")),
     );
@@ -75,50 +125,108 @@ class _ManageScreenState extends State<ManageScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
 
+            // 🔹 ADD INCOME
             const Text("Add Income",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            
+            //Show Added Income
+            StreamBuilder(
+  stream: FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .collection('income')
+      .snapshots(),
+  builder: (context, snapshot) {
+
+    double totalIncome = 0;
+
+    if (snapshot.hasData) {
+      for (var doc in snapshot.data!.docs) {
+        totalIncome += (doc['amount'] as num).toDouble();
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        "Total Income: ₹${totalIncome.toStringAsFixed(2)}",
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.green,
+        ),
+      ),
+    );
+  },
+),
+
+const Divider(height: 40),
 
             TextField(
               controller: incomeController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: "Monthly Income"),
-            ),
-
-            ElevatedButton(
-              onPressed: _saveIncome,
-              child: const Text("Save Income"),
-            ),
-
-            const Divider(height: 40),
-
-            const Text("Add Expense",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: "Expense Title"),
-            ),
-
-            TextField(
-              controller: amountController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: "Amount"),
             ),
 
             DropdownButton<String>(
-              value: selectedCategory,
-              items: categories.map((cat) {
+              value: selectedIncomeCategory,
+              items: incomeCategories.map((cat) {
                 return DropdownMenuItem(value: cat, child: Text(cat));
               }).toList(),
               onChanged: (value) {
-                setState(() {
-                  selectedCategory = value!;
-                });
+                setState(() => selectedIncomeCategory = value!);
               },
             ),
 
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                      "Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"),
+                ),
+                TextButton(
+                  onPressed: pickDate,
+                  child: const Text("Select Date"),
+                ),
+              ],
+            ),
+
             ElevatedButton(
-              onPressed: _addExpense,
+              onPressed: addIncome,
+              child: const Text("Add Income"),
+            ),
+
+            const Divider(height: 40),
+
+            // 🔹 ADD EXPENSE
+            const Text("Add Expense",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+            TextField(
+              controller: expenseTitleController,
+              decoration: const InputDecoration(labelText: "Title"),
+            ),
+
+            TextField(
+              controller: expenseAmountController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Amount"),
+            ),
+
+            DropdownButton<String>(
+              value: selectedExpenseCategory,
+              items: expenseCategories.map((cat) {
+                return DropdownMenuItem(value: cat, child: Text(cat));
+              }).toList(),
+              onChanged: (value) {
+                setState(() => selectedExpenseCategory = value!);
+              },
+            ),
+
+            const SizedBox(height: 10),
+
+            ElevatedButton(
+              onPressed: addExpense,
               child: const Text("Add Expense"),
             ),
           ],
