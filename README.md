@@ -51,25 +51,5 @@ git clone https://github.com/your-username/expense_tracker.git
 cd expense_tracker
 flutter pub get
 flutter run
+---
 
-## 🔥 Highlights
-
-Minimal & distraction-free UI
-Real-time data updates using Firestore
-Designed for performance and simplicity
-Beginner-friendly but production-ready structure
-
-## 📌 Future Enhancements
-
-💸 Budget limits & alerts
-🌙 Dark / Light mode
-☁️ Cloud backup export
-📊 Advanced analytics
-🔔 Smart notifications
-
-## 👤 Author
-Asif
-
-## ⭐ Support
-
-If you like this project, consider giving it a ⭐ on GitHub!
