@@ -40,7 +40,7 @@ Asyntra is a clean and minimal expense tracking application designed to help use
 
 ## 🎯 App Flow
 
-Splash Screen → Login → Dashboard → Manage / Transactions
+Login → Dashboard → Manage / Transactions
 
 ---
 
