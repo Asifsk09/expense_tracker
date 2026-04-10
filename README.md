@@ -1,121 +1,75 @@
-# 💰 Expense Tracker App
+# Asyntra 💸
 
-A modern Flutter-based expense tracking application that helps users manage their income, track expenses, and visualize spending patterns with real-time analytics.
+Asyntra is a clean and minimal expense tracking application designed to help users manage their income and expenses efficiently.
 
 ---
 
 ## 🚀 Features
 
-### 📊 Dashboard
-
-* View total income, expenses, and balance
-* Monthly & yearly insights
-* Interactive pie chart for category-wise spending
-* Monthly comparison with previous data
-
-### ➕ Manage Expenses & Income
-
-* Add monthly income
-* Add expenses with category selection
-* Real-time updates using Firebase Firestore
-
-### 📋 Transactions
-
-* View all expenses in a clean list
-* Filter by category
-* Edit existing expenses
-* Delete with confirmation
-
-### 📤 Export Data
-
-* Export filtered expenses to CSV
-* Saved directly to device Downloads folder
-* Compatible with Excel / Google Sheets
+- 📊 Dashboard with Day / Month / Year insights
+- 💰 Multi-income tracking
+- 🧾 Expense management with categories
+- 📈 Visual charts (category-wise spending)
+- 🔍 Smart filters (date-based tracking)
+- 📤 Export transactions to CSV
+- 🔐 Firebase Authentication (Login/Register)
+- 🚪 Logout functionality
+- 🎨 Clean UI with modern design
+- ⚡ Fast and lightweight performance
 
 ---
 
-## 🛠️ Tech Stack
+## 🧠 Tech Stack
 
-* **Flutter** (UI Framework)
-* **Firebase Firestore** (Database)
-* **fl_chart** (Charts & analytics)
-* **csv** (Export functionality)
-
----
-
-## 📂 Project Structure
-
-```
-lib/
-│
-├── main.dart
-├── screens/
-│   ├── dashboard_screen.dart
-│   ├── transaction_screen.dart
-│   └── manage_screen.dart
-```
+- Flutter
+- Firebase Authentication
+- Cloud Firestore
+- fl_chart (for charts)
+- CSV export
 
 ---
 
-## ⚙️ Setup Instructions
+## 📱 Screens
 
-1. Clone the repository:
+- Login / Register
+- Dashboard (analytics + charts)
+- Manage (add income & expenses)
+- Transactions (filter + export)
 
-```
-git clone https://github.com/Asifsk09/expense_tracker.git
-```
+---
 
-2. Navigate to project folder:
+## 🎯 App Flow
 
-```
+Splash Screen → Login → Dashboard → Manage / Transactions
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/your-username/expense_tracker.git
 cd expense_tracker
-```
-
-3. Install dependencies:
-
-```
 flutter pub get
-```
-
-4. Run the app:
-
-```
 flutter run
-```
 
----
+## 🔥 Highlights
 
-## 🔐 Firebase Setup
+Minimal & distraction-free UI
+Real-time data updates using Firestore
+Designed for performance and simplicity
+Beginner-friendly but production-ready structure
 
-* Create a Firebase project
-* Add Android app
-* Download `google-services.json`
-* Place it inside:
+## 📌 Future Enhancements
 
-```
-android/app/
-```
+💸 Budget limits & alerts
+🌙 Dark / Light mode
+☁️ Cloud backup export
+📊 Advanced analytics
+🔔 Smart notifications
 
----
-
-## 📈 Future Enhancements
-
-* 🔐 User Authentication (Firebase Auth)
-* 📊 Advanced charts & insights
-* 📅 Daily tracking & custom date filters
-* 📄 PDF export
-* ☁️ Cloud backup per user
-
----
-
-## 👨‍💻 Author
-
-**Asif**
-
----
+## 👤 Author
+Asif
 
 ## ⭐ Support
 
 If you like this project, consider giving it a ⭐ on GitHub!
-
----
