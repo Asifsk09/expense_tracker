@@ -125,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       var docs = snapshot.data!.docs;
 
-                      var filteredDocs;
+                      List<QueryDocumentSnapshot<Map<String, dynamic>>> filteredDocs;
 
                       if (selectedView == "Day") {
                         filteredDocs = docs.where((doc) {
